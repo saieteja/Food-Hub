@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import Navbar from './components/Navbar';
 import RestaurantList from './components/RestaurantList';
 import SearchBar from './components/SearchBar';
+import ImageSlider from './components/ImageSlider'; // Import the ImageSlider component
 import './App.css';
 
 function App() {
@@ -18,11 +19,20 @@ function App() {
     setSearchTerm(term); // Update search term
   };
 
+  // Array of image URLs for the slider
+  const images = [
+    '/assets/image1.jpg', // Replace with your actual image paths
+    '/assets/image2.jpg',
+    '/assets/image3.jpg',
+  ];
+
   return (
     <div className="App">
       <Navbar onAboutClick={handleAboutClick} />
       <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} /> {/* Search bar */}
-      
+
+      <ImageSlider images={images} /> {/* Add the ImageSlider here */}
+
       <div className="container">
         <RestaurantList searchTerm={searchTerm} />
       </div>
