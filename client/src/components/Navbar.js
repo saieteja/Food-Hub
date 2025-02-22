@@ -1,23 +1,36 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import './Navbar.css';
 
-function Navbar({ onAboutClick }) { // Receive the onAboutClick prop from App.js
+function Navbar({ onAboutClick, cartItems }) {
   const [showContact, setShowContact] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current page location
 
   const handleContactClick = () => {
-    setShowContact(!showContact); // Toggle the visibility of contact details
+    setShowContact(!showContact);
+  };
+
+  const handleAboutClick = () => {
+    if (location.pathname !== "/") {
+      navigate("/"); // Navigate to Home Page first
+      setTimeout(() => onAboutClick(), 500); // Scroll to About section after a short delay
+    } else {
+      onAboutClick(); // If already on Home Page, just scroll
+    }
   };
 
   return (
     <nav className="navbar">
       <h1>Food Hub</h1>
       <ul>
-        <li>Home</li>
-        <li onClick={onAboutClick}>About</li> {/* Call the passed function when About is clicked */}
+        <li onClick={() => navigate('/')}>Home</li>
+        <li onClick={handleAboutClick}>About</li> {/* Fix applied here */}
         <li onClick={handleContactClick}>Contact</li>
+        <li className="cart-icon" onClick={() => navigate('/cart')}> 🛒 Cart ({cartItems}) </li>
+        <li onClick={() => navigate("/login")}>🔑 Login</li>
       </ul>
 
-      {/* Conditional rendering for Contact Details */}
       {showContact && (
         <div className="contact-details">
           <h3>Contact Us</h3>

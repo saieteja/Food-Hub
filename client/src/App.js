@@ -1,54 +1,63 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import RestaurantList from './components/RestaurantList';
+import LoginPage from "./components/LoginPage";
 import SearchBar from './components/SearchBar';
-import ImageSlider from './components/ImageSlider'; // Import the ImageSlider component
+import ImageSlider from './components/ImageSlider';
+import RestaurantList from './components/RestaurantList';
+import RestaurantMenu from './components/RestaurantMenu';
+import CartPage from './components/CartPage';
+import PaymentPage from './components/PaymentPage'; // Import Payment Page
 import './App.css';
 
 function App() {
-  const aboutRef = useRef(null); // Reference for About section
-  const [searchTerm, setSearchTerm] = useState(""); // State to store search term
+  const aboutRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [cart, setCart] = useState([]);
 
-  const handleAboutClick = () => {
-    if (aboutRef.current) {
-      aboutRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scroll to About section
-    }
+  useEffect(() => {
+    fetch("http://localhost:5000/cart")
+      .then(res => res.json())
+      .then(data => setCart(data))
+      .catch(err => console.error("Error fetching cart:", err));
+  }, []);
+
+  const addToCart = (item) => {
+    fetch("http://localhost:5000/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item)
+    }).then(() => setCart([...cart, item]));
   };
 
-  const handleSearchChange = (term) => {
-    setSearchTerm(term); // Update search term
+  const removeFromCart = (id) => {
+    fetch(`http://localhost:5000/cart/${id}`, {
+      method: "DELETE"
+    }).then(() => setCart(cart.filter(item => item._id !== id)));
   };
-
-  // Array of image URLs for the slider
-  const images = [
-    '/assets/image1.jpg', // Replace with your actual image paths
-    '/assets/image2.jpg',
-    '/assets/image3.jpg',
-  ];
 
   return (
-    <div className="App">
-      <Navbar onAboutClick={handleAboutClick} />
-      <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} /> {/* Search bar */}
+    <Router>
+      <div className="App">
+        <Navbar onAboutClick={() => aboutRef.current.scrollIntoView({ behavior: 'smooth' })} cartItems={cart.length} />
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
-      <ImageSlider images={images} /> {/* Add the ImageSlider here */}
-
-      <div className="container">
-        <RestaurantList searchTerm={searchTerm} />
+        <Routes>
+          <Route path="/" element={<>
+            <ImageSlider />
+            <RestaurantList searchTerm={searchTerm} />
+            <section ref={aboutRef} className="about-section">
+              <h2>About Food Hub</h2>
+              <p>Food Hub is a leading food e-commerce platform...</p>
+            </section>
+          </>} />
+          <Route path="/restaurant/:restaurantName" element={<RestaurantMenu addToCart={addToCart} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/cart" element={<CartPage cartItems={cart} removeFromCart={removeFromCart} />} />
+          <Route path="/payment" element={<PaymentPage />} /> {/* Payment Page Route */}
+        </Routes>
       </div>
-
-      {/* About Section */}
-      <section ref={aboutRef} className="about-section">
-        <h2>About Food Hub</h2>
-        <p>
-          Food Hub is a leading food e-commerce platform offering a wide variety of food items, from fast food to gourmet meals. 
-          Our goal is to provide customers with a seamless online ordering experience, bringing quality food directly to their doorsteps.
-        </p>
-        <p>
-          We partner with top restaurants to offer a diverse range of cuisines, ensuring there's something for everyone. Whether you're craving pizza, burgers, or a healthy salad, Food Hub has it all!
-        </p>
-      </section>
-    </div>
+    </Router>
   );
 }
 

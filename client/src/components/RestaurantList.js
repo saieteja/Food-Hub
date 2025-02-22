@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './RestaurantList.css';
 
 const restaurants = [
@@ -10,7 +11,7 @@ const restaurants = [
   { id: 6, name: 'Burger King', image: 'Restaurant 6.jpg' },
 ];
 
-const foodItems = [
+const allFoodItems = [
   { id: 1, name: 'Pizza', image: 'food.jpg' },
   { id: 2, name: 'Burger', image: 'food1.jpg' },
   { id: 3, name: 'Pasta', image: 'food2.jpg' },
@@ -19,25 +20,27 @@ const foodItems = [
   { id: 6, name: 'Tandoori Roti', image: 'food5.jpg' },
 ];
 
-function RestaurantList({ searchTerm }) {
-  // Filter the restaurants and food items based on the searchTerm
+function RestaurantList({ searchTerm, selectedRestaurant }) {
+  const navigate = useNavigate();
+
   const filteredRestaurants = restaurants.filter(restaurant =>
     restaurant.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredFoodItems = foodItems.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="restaurant-list">
       <div className="sections-container">
+        
         {/* Restaurants Section */}
         <section className="restaurants-section">
           <h2>Explore Restaurants</h2>
           <div className="restaurants">
             {filteredRestaurants.map(restaurant => (
-              <div key={restaurant.id} className="restaurant-card">
+              <div 
+                key={restaurant.id} 
+                className="restaurant-card" 
+                onClick={() => navigate(`/restaurant/${restaurant.name}`)} // Redirect to restaurant page
+              >
                 <img src={`/assets/${restaurant.image}`} alt={restaurant.name} />
                 <h3>{restaurant.name}</h3>
               </div>
@@ -45,11 +48,11 @@ function RestaurantList({ searchTerm }) {
           </div>
         </section>
 
-        {/* Food Items Section */}
+        {/* Food Items Section (Always Visible on Home Page) */}
         <section className="food-items-section">
-          <h2>Explore Food Items</h2>
+          <h2>{selectedRestaurant ? `${selectedRestaurant} Menu` : 'Explore Food Items'}</h2>
           <div className="food-items-list">
-            {filteredFoodItems.map(item => (
+            {allFoodItems.map(item => (
               <div key={item.id} className="food-item-card">
                 <img src={`/assets/${item.image}`} alt={item.name} />
                 <h3>{item.name}</h3>
