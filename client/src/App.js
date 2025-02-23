@@ -1,13 +1,15 @@
+// App.js
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Register from './components/Register';
 import LoginPage from "./components/LoginPage";
 import SearchBar from './components/SearchBar';
 import ImageSlider from './components/ImageSlider';
 import RestaurantList from './components/RestaurantList';
 import RestaurantMenu from './components/RestaurantMenu';
 import CartPage from './components/CartPage';
-import PaymentPage from './components/PaymentPage'; // Import Payment Page
+import PaymentPage from './components/PaymentPage';
 import './App.css';
 
 function App() {
@@ -36,10 +38,16 @@ function App() {
     }).then(() => setCart(cart.filter(item => item._id !== id)));
   };
 
+  const handleAboutClick = () => {
+    if (aboutRef.current) {
+      aboutRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <Router>
       <div className="App">
-        <Navbar onAboutClick={() => aboutRef.current.scrollIntoView({ behavior: 'smooth' })} cartItems={cart.length} />
+        <Navbar onAboutClick={handleAboutClick} cartItems={cart.length} />
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
         <Routes>
@@ -52,9 +60,10 @@ function App() {
             </section>
           </>} />
           <Route path="/restaurant/:restaurantName" element={<RestaurantMenu addToCart={addToCart} />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/cart" element={<CartPage cartItems={cart} removeFromCart={removeFromCart} />} />
-          <Route path="/payment" element={<PaymentPage />} /> {/* Payment Page Route */}
+          <Route path="/payment" element={<PaymentPage />} />
         </Routes>
       </div>
     </Router>

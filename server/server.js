@@ -2,23 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const authRoutes = require('./auth'); // Import authentication routes
+const routes = require('./routes'); // Import cart routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "your-mongodb-uri-here";
 
-// ✅ Middleware
+// Middleware
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:3000" })); // Allow frontend requests
 
-// ✅ Connect to MongoDB
+// Connect to MongoDB
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
-// ✅ Cart Schema
+// Cart Schema
 const cartSchema = new mongoose.Schema({
   name: String,
   image: String,
@@ -27,7 +29,7 @@ const cartSchema = new mongoose.Schema({
 
 const Cart = mongoose.model('Cart', cartSchema);
 
-// ✅ Routes
+// Cart Routes
 app.get('/cart', async (req, res) => {
   try {
     const cartItems = await Cart.find();
@@ -56,5 +58,11 @@ app.delete('/cart/:id', async (req, res) => {
   }
 });
 
-// ✅ Start Server
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// Use the authentication and cart routes
+app.use('/api/auth', authRoutes); // Prefix auth routes with /api/auth
+app.use('/api/cart', routes); // Prefix cart routes with /api/cart
+
+// Start Server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
