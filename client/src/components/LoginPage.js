@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux'; // Import useDispatch
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
+
+const BASE_URL = "https://food-hub-6.onrender.com"; // Your server's URL
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const dispatch = useDispatch(); // Initialize dispatch
-  const navigate = useNavigate(); // Initialize navigate
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, {
         email,
         password,
       });
@@ -48,7 +50,7 @@ const LoginPage = () => {
         />
         <button type="submit" className="login-btn">Login</button>
       </form>
-      {message && <p className="message">{message}</p>} {/* Display message */}
+      {message && <p className="message">{message}</p>}
     </div>
   );
 };
