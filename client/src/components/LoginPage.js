@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
-const BASE_URL = "https://food-hub-6.onrender.com"; // Your server's URL
+const BASE_URL = "http://192.168.31.172:5000"; // Your server's IP address
+ // Change to your server's IP address
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -50,7 +51,7 @@ const LoginPage = () => {
         />
         <button type="submit" className="login-btn">Login</button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className="message">{message}</p>} {/* Display message */}
     </div>
   );
 };

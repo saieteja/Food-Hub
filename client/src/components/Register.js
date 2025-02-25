@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
-const BASE_URL = "https://food-hub-6.onrender.com"; // Your deployed backend server URL
+const BASE_URL = "http://192.168.31.172:5000";
+// Change to your server's IP address
 
 const Register = () => {
   const [email, setEmail] = useState('');
